@@ -1,0 +1,31 @@
+use std::str::FromStr;
+use crate::ast::*;
+
+grammar;
+
+pub Exprs: Vec<Ast> = {
+    <v:(<Expr>)*> => v,
+};
+
+// Parse an AST expression.
+Expr: Ast = {
+    "(" <Exprs> ")" => Ast::List(<>),
+    "val" <ident:Term> "::" "Int" <val:Expr> => Ast::Var(ident, Box::new(val)),
+    "null" => Ast::Null,
+    Num => Ast::Int(<>),
+    r";[^;\n\r]*" => Ast::Null,
+    Term => Ast::Symbol(<>),
+};
+
+
+//Ident: String = {
+//    <s:r"[_a-zA-Z][_a-zA-Z0-9]*"> => s.to_string(),
+//};
+
+Term: String = {
+    r#"[A-Za-z_?+*/.=<>-]+[0-9A-Za-z_?+*/.=<>-]*"# => (<>).to_owned()
+};
+
+Num: i32 = {
+    r"[0-9]+" => i32::from_str(<>).unwrap()
+};

@@ -7,20 +7,30 @@ pub Exprs: Vec<Ast> = {
     <v:(<Expr>)*> => v,
 };
 
-// Parse an AST expression.
-Expr: Ast = {
+pub Expr: Ast = {
     "(" <Exprs> ")" => Ast::List(<>),
-    "val" <ident:Term> ":""Int" <val:Expr> => Ast::Var(ident, Box::new(val)),
+    "val" <ident:Term> ":Int" <val:Expr> => Ast::Var(ident, Box::new(val)),
+    "defun" <ident:Term> "("<args:ParamList>")" ":Int" <list:Block> => Ast::Function(ident, args, list),
     "null" => Ast::Null,
-    Num => Ast::Int(<>),
     r";[^;\n\r]*" => Ast::Null,
     Term => Ast::Symbol(<>),
+    Num => Ast::Int(<>),
 };
 
+pub Block: Vec<Ast> = {
+    "(" <list:Expr*> ")" => list,
+}
 
-//Ident: String = {
-//    <s:r"[_a-zA-Z][_a-zA-Z0-9]*"> => s.to_string(),
-//};
+pub ParamList: Vec<String> = {
+    () => vec![],
+    <head:Term>":Int"=> vec![head],
+    <head:Term>":Int" "," <tail:ParamList> => {
+        let mut list = tail.clone();
+        list.insert(0, head);
+
+        list
+    },
+}
 
 Term: String = {
     r#"[A-Za-z_?+*/.=<>-]+[0-9A-Za-z_?+*/.=<>-]*"# => (<>).to_owned()

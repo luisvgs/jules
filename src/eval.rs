@@ -7,6 +7,7 @@ use std::rc::Rc;
 pub fn eval_ast(ast: Ast, env: Rc<RefCell<Env>>) -> Result<Value, String> {
     match ast {
         Ast::List(list) => match &list[..] {
+            [Ast::Int(a)] => Ok(Value::Int(*a)),
             [Ast::Symbol(sym), _x @ ..] if sym == "+" => {
                 let foo = list.clone().iter().fold(0, |acc, num| {
                     if let Ast::Int(val) = num {
@@ -23,11 +24,21 @@ pub fn eval_ast(ast: Ast, env: Rc<RefCell<Env>>) -> Result<Value, String> {
                 env.borrow_mut().bind(name.into(), ev_val);
                 Ok(Value::Nil)
             }
-            [Ast::Int(a)] => Ok(Value::Int(*a)),
             [Ast::Symbol(s)] => {
                 let get_val = env.borrow_mut().lookup(s.to_string()).unwrap();
 
                 Ok(get_val)
+            }
+            [Ast::Function(name, args, body)] => {
+                let f = Value::Function(args.to_vec(), body.to_vec());
+
+                env.borrow_mut().bind(name.into(), f.clone());
+
+                println!(
+                    "function {:?} defined, with args {:?} and body {:?}",
+                    name, args, body
+                );
+                Ok(f.clone())
             }
             x => unimplemented!("Unimplemented expression: {:?}", x),
         },

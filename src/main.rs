@@ -21,7 +21,7 @@ fn main() {
     let ast = parser::ExprsParser::new()
         .parse(
             "
-            (val foo :: Int 20)
+            (val foo :Int 20)
             (foo)
             ",
         )

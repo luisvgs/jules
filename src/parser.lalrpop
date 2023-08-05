@@ -10,7 +10,7 @@ pub Exprs: Vec<Ast> = {
 // Parse an AST expression.
 Expr: Ast = {
     "(" <Exprs> ")" => Ast::List(<>),
-    "val" <ident:Term> "::" "Int" <val:Expr> => Ast::Var(ident, Box::new(val)),
+    "val" <ident:Term> ":""Int" <val:Expr> => Ast::Var(ident, Box::new(val)),
     "null" => Ast::Null,
     Num => Ast::Int(<>),
     r";[^;\n\r]*" => Ast::Null,

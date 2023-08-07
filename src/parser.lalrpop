@@ -10,9 +10,10 @@ pub Exprs: Vec<Ast> = {
 pub Expr: Ast = {
     "(" <Exprs> ")" => Ast::List(<>),
     "val" <ident:Term> ":Int" <val:Expr> => Ast::Var(ident, Box::new(val)),
-    "defun" <ident:Term> "("<args:ParamList>")" ":Int" <list:Block> => Ast::Function(ident, args, list),
-    "null" => Ast::Null,
-    r";[^;\n\r]*" => Ast::Null,
+    "defun" <ident:Term> "("<args:ParamList>")" ":Int" <list:Block> => Ast::Function(ident, args,
+    Box::new(Ast::List(list))),
+    "null" => Ast::Nil,
+    r";[^;\n\r]*" => Ast::Nil,
     Term => Ast::Symbol(<>),
     Num => Ast::Int(<>),
 };

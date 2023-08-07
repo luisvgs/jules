@@ -26,20 +26,22 @@ lalrpop_mod!(
 // (let ((result : number (add x 5)))
 //   (print result))
 
-//NOTE: Support for booleans (#t and #f) and more binary operations.
 fn main() {
     let env = environment::Env::new();
+    let mut interpreter = Interpreter::new(env.clone());
     let ast = parser::ExprsParser::new()
         .parse(
             "
-            (defun add (a:Int, b:Int) :Int (3))
+            (defun add (a:Int, b:Int) :Int
+                (+ 9 1))
+            (add 3 4)
             ",
         )
         .unwrap();
     let foo: Vec<Value> = ast
         .iter()
-        .map(|el| eval_ast(el.clone(), env.clone()).unwrap())
+        .map(|el| interpreter.eval_ast(el.clone()).unwrap())
         .collect();
 
-    println!("{:?}", foo);
+    println!("res: {:?}", foo);
 }

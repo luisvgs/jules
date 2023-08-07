@@ -4,7 +4,8 @@ use crate::ast::*;
 pub enum Value {
     Int(i32),
     Bool(bool),
-    Function(Vec<String>, Vec<Ast>),
+    Function(Vec<String>, Box<Ast>),
+    Primitive(String, fn(Vec<Ast>) -> Value),
     Nil,
 }
 
@@ -14,6 +15,7 @@ impl std::fmt::Display for Value {
             Self::Int(a) => write!(f, "{}", a),
             Self::Bool(b) => write!(f, "{}", b),
             Self::Function(args, body) => write!(f, "<fn: defined>"),
+            Self::Primitive(name, func) => write!(f, "<fn:{name} is primitive>: {:?}", func),
             Self::Nil => write!(f, "nil"),
         }
     }

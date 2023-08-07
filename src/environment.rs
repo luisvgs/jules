@@ -1,3 +1,4 @@
+use crate::ast::*;
 use crate::value::*;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -11,10 +12,17 @@ pub struct Env {
 impl Env {
     pub fn new() -> Rc<RefCell<Self>> {
         let env = Rc::new(RefCell::new(Self::default()));
+        env.borrow_mut().bind(
+            "baz".into(),
+            Value::Primitive("baz".into(), |expr: Vec<Ast>| match &expr[..] {
+                [Ast::Int(a), Ast::Int(b)] => Value::Int(a + b),
+                x => unreachable!("unreachable expression caught: {:?}", x),
+            }),
+        );
         env
     }
 
-    pub fn _extend(env: Rc<RefCell<Self>>) -> Self {
+    pub fn extend(env: Rc<RefCell<Self>>) -> Self {
         Self {
             parent: Some(env),
             vars: std::collections::HashMap::new(),

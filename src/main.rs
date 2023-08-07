@@ -2,8 +2,8 @@ mod ast;
 mod environment;
 mod eval;
 mod value;
-
 use eval::*;
+use std::io::Write;
 use value::*;
 
 #[macro_use]
@@ -26,24 +26,35 @@ lalrpop_mod!(
 // (let ((result : number (add x 5)))
 //   (print result))
 
-fn main() {
+//TODO:
+//Error handling
+// Nested variable scoping
+pub fn run() {
     let env = environment::Env::new();
-    let mut interpreter = Interpreter::new(env.clone());
-    let ast = parser::ExprsParser::new()
-        .parse(
-            "
-            (defun add (a:Int, b:Int) :Int
-                (+ 9 1))
-            (add 3 4)
+    let mut interpreter = Interpreter::new(env);
+    loop {
+        print!(":> ");
+        std::io::stdout().flush().unwrap();
+        let mut line = String::new();
+        std::io::stdin()
+            .read_line(&mut line)
+            .expect("Unable to read line from the REPL");
+        if line.is_empty() || line.contains(":q") {
+            break;
+        }
+        match parser::ExprsParser::new().parse(&line) {
+            Ok(nodes) => {
+                let foo: Vec<Expr> = nodes
+                    .iter()
+                    .map(|el| interpreter.eval_ast(el.clone()).unwrap())
+                    .collect();
 
-            (or #f #f)
-            ",
-        )
-        .unwrap();
-    let foo: Vec<Value> = ast
-        .iter()
-        .map(|el| interpreter.eval_ast(el.clone()).unwrap())
-        .collect();
-
-    println!("res: {:?}", foo);
+                println!("{:?}", foo);
+            }
+            Err(e) => println!("Whupps"),
+        }
+    }
+}
+fn main() {
+    run();
 }

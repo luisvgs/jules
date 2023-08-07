@@ -1,15 +1,15 @@
 use crate::ast::*;
 
 #[derive(Debug, Clone)]
-pub enum Value {
+pub enum Expr {
     Int(i32),
     Bool(bool),
     Function(Vec<String>, Box<Ast>),
-    Primitive(String, fn(Vec<Ast>) -> Value),
+    Primitive(String, fn(Vec<Ast>) -> Expr),
     Nil,
 }
 
-impl std::fmt::Display for Value {
+impl std::fmt::Display for Expr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Int(a) => write!(f, "{}", a),

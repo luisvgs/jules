@@ -12,10 +12,10 @@ impl Interpreter {
     pub fn new(env: Rc<RefCell<Env>>) -> Self {
         Self { env }
     }
-    pub fn eval_block(&mut self, stmts: Box<Ast>, env: Rc<RefCell<Env>>) -> Result<Value, String> {
-        let mut value: Value = Value::Nil;
+    pub fn eval_block(&mut self, stmts: Box<Ast>, env: Rc<RefCell<Env>>) -> Result<Expr, String> {
+        let mut value: Expr = Expr::Nil;
         let previous = self.env.clone();
-        let steps = || -> Result<Value, String> {
+        let steps = || -> Result<Expr, String> {
             self.env = env;
             value = self.eval_ast(*stmts).unwrap();
             Ok(value)
@@ -25,13 +25,15 @@ impl Interpreter {
 
         result
     }
-    pub fn eval_ast(&mut self, ast: Ast) -> Result<Value, String> {
+    pub fn eval_ast(&mut self, ast: Ast) -> Result<Expr, String> {
         match ast {
+            Ast::Int(a) => Ok(Expr::Int(a)),
+            Ast::Bool(b) => Ok(Expr::Bool(b)),
             Ast::List(list) => match &list[..] {
-                [Ast::Int(a)] => Ok(Value::Int(*a)),
+                [Ast::Int(a)] => Ok(Expr::Int(*a)),
                 [Ast::Bool(b)] => match b {
-                    true => Ok(Value::Bool(true)),
-                    _ => Ok(Value::Bool(false)),
+                    true => Ok(Expr::Bool(true)),
+                    _ => Ok(Expr::Bool(false)),
                 },
                 [Ast::Symbol(sym), x @ ..] if sym == "+" => {
                     // println!("List to search values in: {:?}", &list);
@@ -45,7 +47,7 @@ impl Interpreter {
                         }
                     });
 
-                    Ok(Value::Int(foo))
+                    Ok(Expr::Int(foo))
                 }
                 [Ast::Symbol(s)] => {
                     let get_val = self.env.borrow_mut().lookup(s.to_string()).unwrap();
@@ -56,8 +58,8 @@ impl Interpreter {
                     let eval_f = self.env.borrow_mut().lookup(f_name.to_string()).unwrap();
 
                     match eval_f {
-                        Value::Primitive(_, f) => Ok(f(args.to_vec())),
-                        Value::Function(params, body) => {
+                        Expr::Primitive(_, f) => Ok(f(args.to_vec())),
+                        Expr::Function(params, body) => {
                             let mut vals = Vec::new();
 
                             for arg in args {
@@ -80,16 +82,15 @@ impl Interpreter {
                 [Ast::Var(name, value)] => {
                     let ev_val = self.eval_ast(*value.clone()).unwrap();
                     self.env.borrow_mut().bind(name.into(), ev_val);
-                    Ok(Value::Nil)
+                    Ok(Expr::Nil)
                 }
                 [Ast::Function(name, args, body)] => {
-                    let f = Value::Function(args.to_vec(), body.clone());
+                    let f = Expr::Function(args.to_vec(), body.clone());
                     self.env.borrow_mut().bind(name.into(), f.clone());
                     Ok(f.clone())
                 }
                 x => unimplemented!("Unimplemented expression: {:?}", x),
             },
-            Ast::Int(a) => Ok(Value::Int(a)),
             error => unimplemented!("Unimplemented feature caught: {:?}", error),
         }
     }

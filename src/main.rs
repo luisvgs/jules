@@ -35,6 +35,8 @@ fn main() {
             (defun add (a:Int, b:Int) :Int
                 (+ 9 1))
             (add 3 4)
+
+            (#f)
             ",
         )
         .unwrap();

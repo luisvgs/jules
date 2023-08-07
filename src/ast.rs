@@ -1,6 +1,7 @@
 #[derive(Debug, Clone)]
 pub enum Ast {
     Int(i32),
+    Bool(bool),
     Symbol(String),
     List(Vec<Ast>),
     Var(String, Box<Ast>),

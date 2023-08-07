@@ -29,6 +29,10 @@ impl Interpreter {
         match ast {
             Ast::List(list) => match &list[..] {
                 [Ast::Int(a)] => Ok(Value::Int(*a)),
+                [Ast::Bool(b)] => match b {
+                    true => Ok(Value::Bool(true)),
+                    _ => Ok(Value::Bool(false)),
+                },
                 [Ast::Symbol(sym), x @ ..] if sym == "+" => {
                     // println!("List to search values in: {:?}", &list);
                     // println!("Leftover: {:?}", &x);

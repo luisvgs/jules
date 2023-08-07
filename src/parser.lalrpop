@@ -13,6 +13,8 @@ pub Expr: Ast = {
     "defun" <ident:Term> "("<args:ParamList>")" ":Int" <list:Block> => Ast::Function(ident, args,
     Box::new(Ast::List(list))),
     "null" => Ast::Nil,
+    "#t" => Ast::Bool(true),
+    "#f" => Ast::Bool(false),
     r";[^;\n\r]*" => Ast::Nil,
     Term => Ast::Symbol(<>),
     Num => Ast::Int(<>),

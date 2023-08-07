@@ -1,4 +1,3 @@
-use crate::ast::*;
 use crate::value::*;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -14,15 +13,15 @@ impl Env {
         let env = Rc::new(RefCell::new(Self::default()));
         env.borrow_mut().bind(
             "baz".into(),
-            Expr::Primitive("baz".into(), |expr: Vec<Ast>| match &expr[..] {
-                [Ast::Int(a), Ast::Int(b)] => Expr::Int(a + b),
+            Expr::Primitive("baz".into(), |expr: Vec<Expr>| match &expr[..] {
+                [Expr::Int(a), Expr::Int(b)] => Expr::Int(a + b),
                 x => unreachable!("unreachable expression caught: {:?}", x),
             }),
         );
         env.borrow_mut().bind(
             "or".into(),
-            Expr::Primitive("or".into(), |expr: Vec<Ast>| match &expr[..] {
-                [Ast::Bool(a), Ast::Bool(b)] => Expr::Bool(*a || *b),
+            Expr::Primitive("or".into(), |expr: Vec<Expr>| match &expr[..] {
+                [Expr::Bool(a), Expr::Bool(b)] => Expr::Bool(*a || *b),
                 x => unreachable!("unreachable expression caught: {:?}", x),
             }),
         );

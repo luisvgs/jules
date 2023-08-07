@@ -35,7 +35,7 @@ impl Interpreter {
                     true => Ok(Expr::Bool(true)),
                     _ => Ok(Expr::Bool(false)),
                 },
-                [Ast::Symbol(sym), x @ ..] if sym == "+" => {
+                [Ast::Symbol(sym), _x @ ..] if sym == "+" => {
                     // println!("List to search values in: {:?}", &list);
                     // println!("Leftover: {:?}", &x);
 
@@ -51,14 +51,16 @@ impl Interpreter {
                 }
                 [Ast::Symbol(s)] => {
                     let get_val = self.env.borrow_mut().lookup(s.to_string()).unwrap();
-
                     Ok(get_val)
                 }
                 [Ast::Symbol(f_name), args @ ..] => {
                     let eval_f = self.env.borrow_mut().lookup(f_name.to_string()).unwrap();
-
+                    let args_: Vec<Expr> = args
+                        .into_iter()
+                        .map(|e| self.eval_ast(e.clone()).unwrap())
+                        .collect();
                     match eval_f {
-                        Expr::Primitive(_, f) => Ok(f(args.to_vec())),
+                        Expr::Primitive(_, f) => Ok(f(args_)),
                         Expr::Function(params, body) => {
                             let mut vals = Vec::new();
 

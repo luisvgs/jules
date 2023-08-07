@@ -6,7 +6,6 @@ pub enum Ast {
     List(Vec<Ast>),
     Var(String, Box<Ast>),
     Function(String, Vec<String>, Box<Ast>),
-    Call(String, Vec<Ast>),
     Nil,
 }
 impl std::fmt::Display for Ast {

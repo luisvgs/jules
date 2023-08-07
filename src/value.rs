@@ -5,7 +5,7 @@ pub enum Expr {
     Int(i32),
     Bool(bool),
     Function(Vec<String>, Box<Ast>),
-    Primitive(String, fn(Vec<Ast>) -> Expr),
+    Primitive(String, fn(Vec<Expr>) -> Expr),
     Nil,
 }
 

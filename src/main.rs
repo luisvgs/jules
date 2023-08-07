@@ -36,7 +36,7 @@ fn main() {
                 (+ 9 1))
             (add 3 4)
 
-            (#f)
+            (or #f #f)
             ",
         )
         .unwrap();

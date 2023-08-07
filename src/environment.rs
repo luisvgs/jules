@@ -19,6 +19,13 @@ impl Env {
                 x => unreachable!("unreachable expression caught: {:?}", x),
             }),
         );
+        env.borrow_mut().bind(
+            "or".into(),
+            Value::Primitive("or".into(), |expr: Vec<Ast>| match &expr[..] {
+                [Ast::Bool(a), Ast::Bool(b)] => Value::Bool(*a || *b),
+                x => unreachable!("unreachable expression caught: {:?}", x),
+            }),
+        );
         env
     }
 

@@ -1,4 +1,6 @@
+use crate::error::*;
 use crate::value::*;
+use anyhow::{anyhow, Result};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -14,15 +16,31 @@ impl Env {
         env.borrow_mut().bind(
             "baz".into(),
             Expr::Primitive("baz".into(), |expr: Vec<Expr>| match &expr[..] {
-                [Expr::Int(a), Expr::Int(b)] => Expr::Int(a + b),
-                x => unreachable!("unreachable expression caught: {:?}", x),
+                [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Int(a + b)),
+                x => Err(anyhow!(JError::EnvironmentError(format!(
+                    "Expected a function, but got {:?}",
+                    x
+                )))),
             }),
         );
         env.borrow_mut().bind(
             "or".into(),
             Expr::Primitive("or".into(), |expr: Vec<Expr>| match &expr[..] {
-                [Expr::Bool(a), Expr::Bool(b)] => Expr::Bool(*a || *b),
-                x => unreachable!("unreachable expression caught: {:?}", x),
+                [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a || *b)),
+                x => Err(anyhow!(JError::EnvironmentError(format!(
+                    "expected (or Bool Bool) but got: {:?}",
+                    x
+                )))),
+            }),
+        );
+        env.borrow_mut().bind(
+            "and".into(),
+            Expr::Primitive("and".into(), |expr: Vec<Expr>| match &expr[..] {
+                [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a && *b)),
+                x => Err(anyhow!(JError::EnvironmentError(format!(
+                    "expected (and Bool Bool) but got: {:?}",
+                    x
+                )))),
             }),
         );
         env

@@ -1,11 +1,13 @@
 use crate::ast::*;
+use crate::error::*;
+use anyhow::{anyhow, Result};
 
 #[derive(Debug, Clone)]
 pub enum Expr {
     Int(i32),
     Bool(bool),
     Function(Vec<String>, Box<Ast>),
-    Primitive(String, fn(Vec<Expr>) -> Expr),
+    Primitive(String, fn(Vec<Expr>) -> Result<Expr>),
     Nil,
 }
 

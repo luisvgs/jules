@@ -1,7 +1,12 @@
 mod ast;
 mod environment;
+mod error;
 mod eval;
+mod tests;
 mod value;
+
+use anyhow::{anyhow, Result};
+use error::*;
 use eval::*;
 use std::io::Write;
 use value::*;
@@ -27,9 +32,8 @@ lalrpop_mod!(
 //   (print result))
 
 //TODO:
-//Error handling
 // Nested variable scoping
-pub fn run() {
+pub fn run() -> Result<()> {
     let env = environment::Env::new();
     let mut interpreter = Interpreter::new(env);
     loop {
@@ -40,7 +44,7 @@ pub fn run() {
             .read_line(&mut line)
             .expect("Unable to read line from the REPL");
         if line.is_empty() || line.contains(":q") {
-            break;
+            break Ok(());
         }
         match parser::ExprsParser::new().parse(&line) {
             Ok(nodes) => {
@@ -49,9 +53,9 @@ pub fn run() {
                     .map(|el| interpreter.eval_ast(el.clone()).unwrap())
                     .collect();
 
-                println!("{:?}", foo);
+                println!("{:?}", foo)
             }
-            Err(e) => println!("Whupps"),
+            Err(e) => return Err(anyhow!(JError::ParsingError(e.to_string()))),
         }
     }
 }

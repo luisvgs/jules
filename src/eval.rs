@@ -14,6 +14,7 @@ impl Interpreter {
     pub fn new(env: Rc<RefCell<Env>>) -> Self {
         Self { env }
     }
+
     pub fn eval_block(&mut self, stmts: Box<Ast>, env: Rc<RefCell<Env>>) -> Result<Expr> {
         let mut value: Expr = Expr::Nil;
         let previous = self.env.clone();
@@ -27,11 +28,48 @@ impl Interpreter {
 
         result
     }
+
+    // pub fn eval(&mut self, expr: Expr) -> Expr {
+    //     println!("eval {:?}", expr.clone());
+    //     match expr {
+    //         Expr::List(args) => {
+    //             println!("s-expression {:?}", args.clone());
+    //             self.eval_expr(args.clone().remove(1))
+    //         }
+    //         _ => expr,
+    //     }
+    // }
+
+    // pub fn eval_expr(&mut self, expr: Expr) -> Expr {
+    //     match expr {
+    //         Expr::List(l) => match &l[..] {
+    //             [Expr::Symbol(sym)] => {
+    //                 let get_val = self.env.borrow_mut().lookup(sym.to_string()).unwrap();
+    //                 get_val
+    //             }
+    //             [Expr::Nil] => Expr::Nil,
+    //             _ => todo!(),
+    //         },
+    //         _ => expr,
+    //     }
+    // }
+
     pub fn eval_ast(&mut self, ast: Ast) -> Result<Expr> {
         match ast {
             Ast::Int(a) => Ok(Expr::Int(a)),
             Ast::Bool(b) => Ok(Expr::Bool(b)),
+            Ast::Var(name, value) => {
+                let ev_val = self.eval_ast(*value.clone()).unwrap();
+                self.env.borrow_mut().bind(name, ev_val);
+                Ok(Expr::Nil)
+            }
+            Ast::Symbol(s) => Ok(Expr::Symbol(s)),
             Ast::List(list) => match &list[..] {
+                // let mut exprs = Vec::new();
+                // for e in list.into_iter() {
+                //     exprs.push(self.eval_ast(e).unwrap())
+                // }
+                // Ok(Expr::List(exprs))
                 [Ast::Int(a)] => Ok(Expr::Int(*a)),
                 [Ast::Bool(b)] => match b {
                     true => Ok(Expr::Bool(true)),
@@ -58,11 +96,11 @@ impl Interpreter {
                         .into_iter()
                         .map(|e| self.eval_ast(e.clone()).unwrap())
                         .collect();
+
                     match eval_f {
-                        Expr::Primitive(_, f) => Ok(f(args_)?),
+                        Expr::Primitive(_, f) => Ok(f(args_, self.env.clone())?),
                         Expr::Function(params, body) => {
                             let mut vals = Vec::new();
-
                             for arg in args {
                                 match self.eval_ast(arg.clone()) {
                                     Ok(v) => vals.push(v),

@@ -15,6 +15,7 @@ impl std::fmt::Display for Ast {
             Self::Function(name, args, body) => write!(f, "<fn: defined>"),
             Self::Nil => write!(f, "nil"),
             Self::Symbol(sym) => write!(f, "{}", sym),
+            Self::Var(sym, _) => write!(f, "{}", sym),
             _ => unreachable!(),
         }
     }

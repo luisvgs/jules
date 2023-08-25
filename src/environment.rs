@@ -14,34 +14,46 @@ impl Env {
     pub fn new() -> Rc<RefCell<Self>> {
         let env = Rc::new(RefCell::new(Self::default()));
         env.borrow_mut().bind(
-            "baz".into(),
-            Expr::Primitive("baz".into(), |expr: Vec<Expr>| match &expr[..] {
-                [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Int(a + b)),
-                x => Err(anyhow!(JError::EnvironmentError(format!(
-                    "Expected a function, but got {:?}",
-                    x
-                )))),
-            }),
+            "or".into(),
+            Expr::Primitive(
+                "or".into(),
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a || *b)),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected (or Bool Bool) but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
         );
         env.borrow_mut().bind(
-            "or".into(),
-            Expr::Primitive("or".into(), |expr: Vec<Expr>| match &expr[..] {
-                [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a || *b)),
-                x => Err(anyhow!(JError::EnvironmentError(format!(
-                    "expected (or Bool Bool) but got: {:?}",
-                    x
-                )))),
-            }),
+            "print".into(),
+            Expr::Primitive(
+                "print".into(),
+                |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::Symbol(s)] => {
+                        let get_val = env.borrow_mut().lookup(s.to_string()).unwrap();
+                        Ok(get_val)
+                    }
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected arguments, but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
         );
         env.borrow_mut().bind(
             "and".into(),
-            Expr::Primitive("and".into(), |expr: Vec<Expr>| match &expr[..] {
-                [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a && *b)),
-                x => Err(anyhow!(JError::EnvironmentError(format!(
-                    "expected (and Bool Bool) but got: {:?}",
-                    x
-                )))),
-            }),
+            Expr::Primitive(
+                "and".into(),
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a && *b)),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected (and Bool Bool) but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
         );
         env
     }

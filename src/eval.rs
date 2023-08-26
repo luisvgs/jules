@@ -29,31 +29,6 @@ impl Interpreter {
         result
     }
 
-    // pub fn eval(&mut self, expr: Expr) -> Expr {
-    //     println!("eval {:?}", expr.clone());
-    //     match expr {
-    //         Expr::List(args) => {
-    //             println!("s-expression {:?}", args.clone());
-    //             self.eval_expr(args.clone().remove(1))
-    //         }
-    //         _ => expr,
-    //     }
-    // }
-
-    // pub fn eval_expr(&mut self, expr: Expr) -> Expr {
-    //     match expr {
-    //         Expr::List(l) => match &l[..] {
-    //             [Expr::Symbol(sym)] => {
-    //                 let get_val = self.env.borrow_mut().lookup(sym.to_string()).unwrap();
-    //                 get_val
-    //             }
-    //             [Expr::Nil] => Expr::Nil,
-    //             _ => todo!(),
-    //         },
-    //         _ => expr,
-    //     }
-    // }
-
     pub fn eval_ast(&mut self, ast: Ast) -> Result<Expr> {
         match ast {
             Ast::Int(a) => Ok(Expr::Int(a)),
@@ -65,18 +40,13 @@ impl Interpreter {
             }
             Ast::Symbol(s) => Ok(Expr::Symbol(s)),
             Ast::List(list) => match &list[..] {
-                // let mut exprs = Vec::new();
-                // for e in list.into_iter() {
-                //     exprs.push(self.eval_ast(e).unwrap())
-                // }
-                // Ok(Expr::List(exprs))
                 [Ast::Int(a)] => Ok(Expr::Int(*a)),
                 [Ast::Bool(b)] => match b {
                     true => Ok(Expr::Bool(true)),
                     _ => Ok(Expr::Bool(false)),
                 },
                 [Ast::Symbol(sym), _x @ ..] if sym == "+" => {
-                    let foo = list.clone().iter().fold(0, |acc, num| {
+                    let num = list.clone().iter().fold(0, |acc, num| {
                         if let Ast::Int(val) = num {
                             val + acc
                         } else {
@@ -84,7 +54,7 @@ impl Interpreter {
                         }
                     });
 
-                    Ok(Expr::Int(foo))
+                    Ok(Expr::Int(num))
                 }
                 [Ast::Symbol(s)] => {
                     let get_val = self.env.borrow_mut().lookup(s.to_string()).unwrap();
@@ -93,7 +63,7 @@ impl Interpreter {
                 [Ast::Symbol(f_name), args @ ..] => {
                     let eval_f = self.env.borrow_mut().lookup(f_name.to_string()).unwrap();
                     let args_: Vec<Expr> = args
-                        .into_iter()
+                        .iter()
                         .map(|e| self.eval_ast(e.clone()).unwrap())
                         .collect();
 

@@ -10,8 +10,7 @@ pub Exprs: Vec<Ast> = {
 pub Expr: Ast = {
     "(" <Exprs> ")" => Ast::List(<>),
     "val" <ident:Term> ":Int"? <val:Expr> => Ast::Var(ident, Box::new(val)),
-    "defun" <ident:Term> "("<args:ParamList>")" ":Int" <list:Block> => Ast::Function(ident, args,
-    Box::new(Ast::List(list))),
+    "defun" <ident:Term> "("<args:ParamList>")" ":Int" <list:Block> => Ast::Function(ident, args, Box::new(Ast::List(list))),
     "null" => Ast::Nil,
     "#t" => Ast::Bool(true),
     "#f" => Ast::Bool(false),
@@ -26,8 +25,8 @@ pub Block: Vec<Ast> = {
 
 pub ParamList: Vec<String> = {
     () => vec![],
-    <head:Term>":Int"=> vec![head],
-    <head:Term>":Int" "," <tail:ParamList> => {
+    <head:Term> ":Int" => vec![head],
+    <head:Term> ":Int" "," <tail:ParamList> => {
         let mut list = tail.clone();
         list.insert(0, head);
 

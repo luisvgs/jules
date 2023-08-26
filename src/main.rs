@@ -77,7 +77,7 @@ pub fn from_file(input: &str) {
 
 fn main() {
     let args = command!()
-        .arg(arg!(-f <VALUE>).required(false))
+        .arg(arg!(--file <VALUE>).required(false))
         .get_matches();
 
     match args.get_one::<String>("file").map(|s| s.as_str()) {

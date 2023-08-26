@@ -8,9 +8,6 @@ use clap::{arg, command};
 use utils::*;
 extern crate lalrpop_util;
 
-//NOTE:
-// (let ((result : Int (add x 5)))
-//   (print result))
 fn main() {
     let args = command!()
         .arg(arg!(--file <VALUE>).required(false))

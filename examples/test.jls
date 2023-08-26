@@ -1,0 +1,6 @@
+(val x :Int 10)
+(print x)
+
+(defun add (a :Int , b :Int ) :Int (+ 3 2))
+
+(add 3 4)

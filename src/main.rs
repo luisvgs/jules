@@ -2,6 +2,7 @@ mod ast;
 mod environment;
 mod error;
 mod eval;
+mod tests;
 mod utils;
 mod value;
 use clap::{arg, command};

@@ -4,7 +4,7 @@ use anyhow::{anyhow, Result};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Env {
     pub parent: Option<Rc<RefCell<Env>>>,
     pub vars: std::collections::HashMap<String, Expr>,

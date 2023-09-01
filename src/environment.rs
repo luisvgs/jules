@@ -43,6 +43,27 @@ impl Env {
             ),
         );
         env.borrow_mut().bind(
+            "list".into(),
+            Expr::Primitive(
+                "list".into(),
+                |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
+                    [head, tail @ ..] => {
+                        let mut els = Vec::new();
+                        els.push(head.clone());
+                        for el in tail.iter() {
+                            els.push(el.clone())
+                        }
+                        Ok(Expr::List(els))
+                    }
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected arguments, but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
+        );
+
+        env.borrow_mut().bind(
             "and".into(),
             Expr::Primitive(
                 "and".into(),

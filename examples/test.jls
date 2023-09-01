@@ -8,3 +8,5 @@
 (defun baz (a :Int , b :Int ) :Int (+ 2 2))
 (val y :Int (baz 5 3))
 (print y)
+
+(list 1 2 3)

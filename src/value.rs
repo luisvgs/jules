@@ -20,10 +20,20 @@ impl std::fmt::Display for Expr {
         match self {
             Self::Int(a) => write!(f, "{}", a),
             Self::Symbol(s) => write!(f, "{}", s),
-            Self::List(l) => write!(f, "{:?}", l),
+            Self::List(l) => {
+                write!(f, "(")?;
+                let mut iter = l.iter().peekable();
+                while let Some(expr) = iter.next() {
+                    write!(f, "{}", expr)?;
+                    if iter.peek().is_some() {
+                        write!(f, " ")?;
+                    }
+                }
+                write!(f, ")")
+            }
             Self::Bool(b) => write!(f, "{}", b),
-            Self::Function(args, body) => write!(f, "<fn: defined>"),
-            Self::Primitive(name, func) => write!(f, "<fn:{name} is primitive>: {:?}", func),
+            Self::Function(args, body) => write!(f, "<fn:defined>"),
+            Self::Primitive(name, func) => write!(f, "<fn:{name}:primitive>: {:?}", func),
             Self::Nil => write!(f, "nil"),
         }
     }

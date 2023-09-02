@@ -43,6 +43,32 @@ impl Env {
             ),
         );
         env.borrow_mut().bind(
+            "cdr".into(),
+            Expr::Primitive(
+                "cdr".into(),
+                |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::List(head), ..] => Ok(head.iter().nth(1).unwrap().clone()),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected arguments, but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
+        );
+        env.borrow_mut().bind(
+            "car".into(),
+            Expr::Primitive(
+                "car".into(),
+                |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::List(head), ..] => Ok(head.first().unwrap().clone()),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected arguments, but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
+        );
+        env.borrow_mut().bind(
             "list".into(),
             Expr::Primitive(
                 "list".into(),
@@ -62,7 +88,6 @@ impl Env {
                 },
             ),
         );
-
         env.borrow_mut().bind(
             "and".into(),
             Expr::Primitive(

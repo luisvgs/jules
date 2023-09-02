@@ -9,6 +9,19 @@ use clap::{arg, command};
 use utils::*;
 extern crate lalrpop_util;
 
+// TODO
+// keywords to implement:
+//
+// [] atom?
+// [] eq
+// [] car
+// [] cdr
+// [] cons/pair
+// [] quote
+// [] cond/if
+// [] lambda
+// [] label/define
+
 fn main() {
     let args = command!()
         .arg(arg!(--file <VALUE>).required(false))

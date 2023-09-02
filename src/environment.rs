@@ -14,6 +14,32 @@ impl Env {
     pub fn new() -> Rc<RefCell<Self>> {
         let env = Rc::new(RefCell::new(Self::default()));
         env.borrow_mut().bind(
+            ">".into(),
+            Expr::Primitive(
+                "<".into(),
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Bool(*a > *b)),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected (or Bool Bool) but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
+        );
+        env.borrow_mut().bind(
+            "<".into(),
+            Expr::Primitive(
+                "<".into(),
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Bool(*a < *b)),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected (or Bool Bool) but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
+        );
+        env.borrow_mut().bind(
             "eq".into(),
             Expr::Primitive(
                 "eq".into(),
@@ -21,7 +47,7 @@ impl Env {
                     [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a == *b)),
                     [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Bool(*a == *b)),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
-                        "expected (or Bool Bool) but got: {:?}",
+                        "expected (eq atom atom) but got: {:?}",
                         x
                     )))),
                 },
@@ -50,7 +76,7 @@ impl Env {
                         Ok(get_val)
                     }
                     x => Err(anyhow!(JError::EnvironmentError(format!(
-                        "expected arguments, but got: {:?}",
+                        "print expected arguments, but got: {:?}",
                         x
                     )))),
                 },
@@ -63,7 +89,7 @@ impl Env {
                 |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
                     [Expr::List(head), ..] => Ok(head.iter().nth(1).unwrap().clone()),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
-                        "expected arguments, but got: {:?}",
+                        "cdr expected arguments, but got: {:?}",
                         x
                     )))),
                 },
@@ -76,7 +102,7 @@ impl Env {
                 |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
                     [Expr::List(head), ..] => Ok(head.first().unwrap().clone()),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
-                        "expected arguments, but got: {:?}",
+                        "car expected arguments, but got: {:?}",
                         x
                     )))),
                 },
@@ -96,7 +122,7 @@ impl Env {
                         Ok(Expr::List(els))
                     }
                     x => Err(anyhow!(JError::EnvironmentError(format!(
-                        "expected arguments, but got: {:?}",
+                        "list expected arguments, but got: {:?}",
                         x
                     )))),
                 },

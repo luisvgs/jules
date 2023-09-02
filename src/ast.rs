@@ -8,6 +8,7 @@ pub enum Ast {
     Function(String, Vec<String>, Box<Ast>),
     Nil,
 }
+
 impl std::fmt::Display for Ast {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

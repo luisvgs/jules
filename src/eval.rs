@@ -33,6 +33,7 @@ impl Interpreter {
     pub fn eval_ast(&mut self, ast: Ast) -> Result<Expr> {
         match ast {
             Ast::Int(a) => Ok(Expr::Int(a)),
+            Ast::Nil => Ok(Expr::Nil),
             Ast::Bool(b) => Ok(Expr::Bool(b)),
             Ast::Var(name, value) => {
                 let ev_val = self.eval_ast(*value.clone()).unwrap();
@@ -104,6 +105,7 @@ impl Interpreter {
                     self.env.borrow_mut().bind(name.into(), f.clone());
                     Ok(f.clone())
                 }
+                [Ast::Nil] => Ok(Expr::Nil),
                 e => Err(anyhow!(JError::UnimplementedFeature(format!(
                     "{:?}",
                     e.clone()

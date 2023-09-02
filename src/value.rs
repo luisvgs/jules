@@ -1,10 +1,11 @@
 use crate::ast::*;
 use crate::environment::*;
 use anyhow::Result;
+use kinded::Kinded;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Kinded)]
 pub enum Expr {
     Int(i32),
     Bool(bool),

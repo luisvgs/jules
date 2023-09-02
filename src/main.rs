@@ -11,13 +11,12 @@ extern crate lalrpop_util;
 
 // TODO
 // keywords to implement:
-//
 // [] atom?
-// [] eq
-// [] car
-// [] cdr
-// [] cons/pair
+// [X] eq
+// [X] car
+// [X] cdr
 // [] quote
+// [] cons/pair
 // [] cond/if
 // [] lambda
 // [] label/define

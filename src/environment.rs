@@ -14,6 +14,20 @@ impl Env {
     pub fn new() -> Rc<RefCell<Self>> {
         let env = Rc::new(RefCell::new(Self::default()));
         env.borrow_mut().bind(
+            "eq".into(),
+            Expr::Primitive(
+                "eq".into(),
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::Bool(a), Expr::Bool(b)] => Ok(Expr::Bool(*a == *b)),
+                    [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Bool(*a == *b)),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected (or Bool Bool) but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
+        );
+        env.borrow_mut().bind(
             "or".into(),
             Expr::Primitive(
                 "or".into(),

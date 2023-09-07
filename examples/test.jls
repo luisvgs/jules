@@ -7,6 +7,4 @@
 ; (defun baz (a :Int , b :Int ) :Int (+ 2 2))
 ; (val y :Int (baz 5 3))
 ; (print y)
-; (cdr (list 1 2 3))
-; (eq 3 3)
-(eq 'a 'a)
+(cdr (list 1 2 3))

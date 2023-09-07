@@ -33,8 +33,8 @@ impl std::fmt::Display for Expr {
                 write!(f, ")")
             }
             Self::Bool(b) => write!(f, "{}", b),
-            Self::Function(args, body) => write!(f, "<fn:defined>"),
-            Self::Primitive(name, func) => write!(f, "<fn:{name}:primitive>: {:?}", func),
+            Self::Function(_args, _body) => write!(f, "<fn:defined>"),
+            Self::Primitive(name, _func) => write!(f, "<fn:{name}:primitive>"),
             Self::Nil => write!(f, "nil"),
         }
     }

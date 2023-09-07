@@ -13,7 +13,7 @@ impl std::fmt::Display for Ast {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Int(a) => write!(f, "{}", a),
-            Self::Function(name, args, body) => write!(f, "<fn: {}>", name),
+            Self::Function(name, _args, _body) => write!(f, "<fn: {}>", name),
             Self::Nil => write!(f, "nil"),
             Self::Symbol(sym) => write!(f, "{}", sym),
             Self::Var(sym, _) => write!(f, "{}", sym),

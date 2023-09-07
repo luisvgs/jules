@@ -2,6 +2,7 @@ mod ast;
 mod environment;
 mod error;
 mod eval;
+#[cfg(test)]
 mod tests;
 mod utils;
 mod value;

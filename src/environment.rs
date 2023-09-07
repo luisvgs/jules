@@ -1,6 +1,6 @@
 use crate::error::*;
 use crate::value::*;
-use anyhow::{anyhow, Result};
+use anyhow::anyhow;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -86,7 +86,7 @@ impl Env {
             "cdr".into(),
             Expr::Primitive(
                 "cdr".into(),
-                |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
                     [Expr::List(head), ..] => Ok(head.iter().nth(1).unwrap().clone()),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
                         "cdr expected arguments, but got: {:?}",
@@ -99,7 +99,7 @@ impl Env {
             "car".into(),
             Expr::Primitive(
                 "car".into(),
-                |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
                     [Expr::List(head), ..] => Ok(head.first().unwrap().clone()),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
                         "car expected arguments, but got: {:?}",
@@ -112,7 +112,7 @@ impl Env {
             "list".into(),
             Expr::Primitive(
                 "list".into(),
-                |expr: Vec<Expr>, env: Rc<RefCell<Env>>| match &expr[..] {
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
                     [head, tail @ ..] => {
                         let mut els = Vec::new();
                         els.push(head.clone());

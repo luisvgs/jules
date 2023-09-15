@@ -10,6 +10,7 @@ pub Exprs: Vec<Ast> = {
 pub Expr: Ast = {
     "(" <Exprs> ")" => Ast::List(<>),
     "val" <ident:Term> ":Int"? <val:Expr> => Ast::Var(ident, Box::new(val)),
+    "if" <b:Expr> <t:Expr> <f:Expr> => Ast::If(Box::new(b), Box::new(t), Box::new(f)),
     "defun" <ident:Term> "("<args:ParamList>")" ":Int" <list:Block> => Ast::Function(ident, args, Box::new(Ast::List(list))),
     "null" => Ast::Nil,
     "#t" => Ast::Bool(true),

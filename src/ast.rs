@@ -5,6 +5,7 @@ pub enum Ast {
     Symbol(String),
     List(Vec<Ast>),
     Var(String, Box<Ast>),
+    If(Box<Ast>, Box<Ast>, Box<Ast>),
     Function(String, Vec<String>, Box<Ast>),
     Nil,
 }

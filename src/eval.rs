@@ -47,6 +47,16 @@ impl Interpreter {
                     true => Ok(Expr::Bool(true)),
                     _ => Ok(Expr::Bool(false)),
                 },
+                [Ast::If(b, t, f)] => {
+                    let eval_condition = self.eval_ast(*b.clone()).unwrap();
+                    let ev_t = self.eval_ast(*t.clone()).unwrap();
+                    let ev_f = self.eval_ast(*f.clone()).unwrap();
+                    match eval_condition {
+                        Expr::Bool(true) => Ok(ev_t),
+                        Expr::Bool(false) => Ok(ev_f),
+                        _ => unreachable!(),
+                    }
+                }
                 [Ast::Symbol(sym), _x @ ..] if sym == "+" => {
                     let num = list.clone().iter().fold(0, |acc, num| {
                         if let Ast::Int(val) = num {

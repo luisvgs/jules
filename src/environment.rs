@@ -20,7 +20,20 @@ impl Env {
                 |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
                     [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Bool(*a > *b)),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
-                        "expected (or Bool Bool) but got: {:?}",
+                        "expected (> Bool Bool) but got: {:?}",
+                        x
+                    )))),
+                },
+            ),
+        );
+        env.borrow_mut().bind(
+            "=".into(),
+            Expr::Primitive(
+                "=".into(),
+                |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
+                    [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Bool(*a == *b)),
+                    x => Err(anyhow!(JError::EnvironmentError(format!(
+                        "expected (= Bool Bool) but got: {:?}",
                         x
                     )))),
                 },
@@ -33,7 +46,7 @@ impl Env {
                 |expr: Vec<Expr>, _env: Rc<RefCell<Env>>| match &expr[..] {
                     [Expr::Int(a), Expr::Int(b)] => Ok(Expr::Bool(*a < *b)),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
-                        "expected (or Bool Bool) but got: {:?}",
+                        "expected (< Bool Bool) but got: {:?}",
                         x
                     )))),
                 },

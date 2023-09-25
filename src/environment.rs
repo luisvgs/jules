@@ -88,6 +88,7 @@ impl Env {
                         let get_val = env.borrow_mut().lookup(s.to_string()).unwrap();
                         Ok(get_val)
                     }
+                    [e] => Ok(e.clone()),
                     x => Err(anyhow!(JError::EnvironmentError(format!(
                         "print expected arguments, but got: {:?}",
                         x

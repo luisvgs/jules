@@ -16,9 +16,9 @@ extern crate lalrpop_util;
 // [X] eq
 // [X] car
 // [X] cdr
+// [X] cond/if
 // [] quote
 // [] cons/pair
-// [] cond/if
 // [] lambda
 // [] label/define
 

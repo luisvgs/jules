@@ -39,3 +39,22 @@ impl std::fmt::Display for Expr {
         }
     }
 }
+
+impl std::ops::Add<i32> for Expr {
+    type Output = Self;
+    fn add(self, other: i32) -> Self {
+        match self {
+            Self::Int(x) => Expr::Int(x + other),
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl From<Expr> for i32 {
+    fn from(expr: Expr) -> i32 {
+        match expr {
+            Expr::Int(n) => n,
+            _ => unreachable!(),
+        }
+    }
+}

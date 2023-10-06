@@ -58,11 +58,17 @@ impl Interpreter {
                     }
                 }
                 [Ast::Symbol(sym), _x @ ..] if sym == "+" => {
-                    let num = list.clone().iter().fold(0, |acc, num| {
-                        if let Ast::Int(val) = num {
-                            val + acc
-                        } else {
-                            acc
+                    let num = _x.clone().iter().fold(0, |acc, num| {
+                        match num {
+                            Ast::Int(n) => n + acc,
+                            Ast::Symbol(s) => {
+                                let val: Expr =
+                                    self.env.borrow_mut().lookup(s.to_string()).unwrap();
+
+                                // TODO: there should be a better approach to casting into i32
+                                Into::<i32>::into(val) + acc
+                            }
+                            _ => unreachable!(),
                         }
                     });
 

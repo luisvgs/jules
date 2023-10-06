@@ -22,6 +22,8 @@ extern crate lalrpop_util;
 // [] lambda
 // [] label/define
 
+// FIX:
+// [] print statements are failing?
 fn main() {
     let args = command!()
         .arg(arg!(--file <VALUE>).required(false))
